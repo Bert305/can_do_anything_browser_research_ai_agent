@@ -1,0 +1,42 @@
+Task: Give me the latest video games from store.playstation.com and summarize the top 5 trending games with their prices and release dates in a pdf.
+Generated: 2025-07-25 19:05:50
+============================================================
+
+Here is a summary of the top 5 trending/latest PlayStation Store games (July 2025):
+
+1. Ready or Not - $49.99 (Release Date: 7/15/2025)
+2. EA SPORTS College Football 26 - $99.99 (Save 10%) (Release Date: Not available)
+3. Fortnite - Free (Release Date: Not available)
+4. Call of Duty: Black Ops 6 - $69.99 (Release Date: Not available)
+5. NBA 2K25 - $69.99 (Release Date: Not available)
+
+_Release dates for some games could not be retrieved due to technical barriers on the PlayStation Store website, but all prices and names are current as of July 2025._
+
+See full details in the attached PDF.
+
+Attachments:
+
+results.pdf:
+# Top 5 Trending/Latest PlayStation Store Games (July 2025)
+
+1. **Ready or Not**
+   - Price: $49.99
+   - Release Date: 7/15/2025
+
+2. **EA SPORTS™ College Football 26**
+   - Price: $99.99 (Save 10%)
+   - Release Date: Not available
+
+3. **Fortnite**
+   - Price: Free
+   - Release Date: Not available
+
+4. **Call of Duty®: Black Ops 6**
+   - Price: $69.99
+   - Release Date: Not available
+
+5. **NBA 2K25**
+   - Price: $69.99
+   - Release Date: Not available
+
+_Release dates for some games could not be retrieved due to technical barriers on the PlayStation Store website, but titles and prices are accurate as of July 2025._

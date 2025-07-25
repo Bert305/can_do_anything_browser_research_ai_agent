@@ -1,3 +1,8 @@
 browser-use
 python-dotenv
 openai
+pandas
+reportlab
+fpdf2
+matplotlib
+Pillow
