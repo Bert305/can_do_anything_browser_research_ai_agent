@@ -2,12 +2,11 @@
 
 ## Overview
 
-`can_do_anything_browser_research_ai_agent` is an AI-powered research and web scraping agent designed to automate browser-based tasks and information gathering. It leverages browser automation to perform complex research workflows and web scraping, making it ideal for users who need to collect, analyze, and summarize web data efficiently.
+`can_do_anything_browser_research_ai_agent` is an AI-powered research agent designed to automate browser-based tasks and information gathering. It leverages browser automation to perform complex research workflows, making it ideal for users who need to collect, analyze, and summarize web data efficiently.
 
 ## Features
 
 - Automated web browsing and data extraction
-- Powerful web scraping capabilities
 - Customizable research workflows
 - Integration with AI models for summarization and analysis
 - Easy setup and extensibility
@@ -38,10 +37,10 @@ pip install -r requirements.txt
 After installation, run:
 
 ```bash
-python agent.py
+python main.py
 ```
 
-Configure your research and web scraping tasks in `config.yaml` or via the command line.
+Configure your research tasks in `config.yaml` or via the command line.
 
 ## Documentation
 
