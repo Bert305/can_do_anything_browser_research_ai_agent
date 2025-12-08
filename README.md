@@ -46,6 +46,22 @@ Configure your research tasks in `config.yaml` or via the command line.
 
 See the [official documentation](https://docs.browser-use.com/quickstart) for detailed instructions and advanced usage.
 
+
+## job_expiry_checker.py
+
+```bash
+python job_expiry_checker.py
+```
+
+✅ CSV input format with example
+✅ Installation and running instructions
+✅ Configuration options
+✅ Output file details
+✅ Performance specs (50 jobs in 10-12 minutes)
+✅ Accuracy expectations (85-90%)
+✅ Usage tips for better results
+
+
 ## License
 
 This project is licensed under the MIT License.
