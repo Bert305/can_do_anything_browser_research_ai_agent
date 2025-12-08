@@ -13,7 +13,7 @@ load_dotenv()
 # 🚀 JOB EXPIRY CHECKER BOT
 # =============================================================================
 # Input CSV file path (must have columns: company_name, title, application_url)
-INPUT_CSV = "bot_jobs.csv"
+INPUT_CSV = "bot_jobs2.csv"
 
 # Output will be saved as: job_expiry_check_TIMESTAMP.csv
 OUTPUT_FOLDER = "output"
@@ -29,26 +29,42 @@ llm = ChatOpenAI(model="gpt-4.1")
 
 async def check_job_expired(job_url, company_name, job_title):
     """
-    Check if a LinkedIn job posting has expired
+    Check if a LinkedIn job posting has expired - IMPROVED ACCURACY
     Returns: 'Yes' if expired, 'No' if still accepting applications, 'Error' if can't determine
     """
     
     task = f"""
     Go to this LinkedIn job URL: {job_url}
     
-    Check if the job is still accepting applications or if it has expired.
+    Your ONLY task is to determine if this specific job posting has EXPIRED or is still ACTIVE.
     
-    Look for any of these indicators that the job is expired:
-    - "No longer accepting applications" message
-    - "Job posting has been closed" or similar message
-    - Any indication that applications are closed
+    CRITICAL INSTRUCTIONS:
+    1. Look at the job posting page carefully
+    2. Ignore login prompts, sign-up messages, or "Join to apply" buttons
+    3. Focus ONLY on the job status
+    
+    EXPIRED indicators (respond "Yes"):
+    - Explicitly states "No longer accepting applications"
+    - Says "This job posting has closed"
+    - Shows "Applications are closed"
+    - Has a red/gray badge saying "Closed" or "Expired"
+    
+    ACTIVE indicators (respond "No"):
+    - Shows "Easy Apply" button
+    - Shows "Apply" button
+    - Shows number of applicants (e.g., "50 applicants")
+    - Shows "Be an early applicant"
+    - Shows posted date (e.g., "Posted 2 days ago") WITHOUT expired message
+    - Shows company info and job details normally
+    
+    IMPORTANT: If you see an "Apply" or "Easy Apply" button, the job is ACTIVE (respond "No").
+    Do NOT confuse LinkedIn login prompts with job expiry messages.
     
     Respond with ONLY ONE WORD:
-    - "No" if the job is still accepting applications (job is active)
-    - "Yes" if the job has expired or is no longer accepting applications
+    - "No" = Job is ACTIVE (still accepting applications)
+    - "Yes" = Job is EXPIRED (no longer accepting applications)
     
-    Company: {company_name}
-    Job Title: {job_title}
+    Job: {job_title} at {company_name}
     """
     
     try:
@@ -58,24 +74,46 @@ async def check_job_expired(job_url, company_name, job_title):
             browser_session=browser_session,
         )
         
-        print(f"   Checking: {job_title} at {company_name}...")
+        print(f"   Checking: {job_title[:40]}... at {company_name}")
         result = await agent.run()
-        response = result.final_result().strip().upper()
+        response = result.final_result().strip()
         
-        # Parse the response
-        if "YES" in response:
+        # More robust parsing with explicit checks
+        response_upper = response.upper()
+        response_lower = response.lower()
+        
+        # First check: Direct Yes/No in response
+        if response_upper.startswith("YES") or response_upper == "YES":
             return "Yes"
-        elif "NO" in response:
+        elif response_upper.startswith("NO") or response_upper == "NO":
             return "No"
-        else:
-            # Try to determine from the full response
-            response_lower = response.lower()
-            if "no longer" in response_lower or "closed" in response_lower or "expired" in response_lower:
-                return "Yes"
-            elif "accepting" in response_lower or "active" in response_lower or "open" in response_lower:
-                return "No"
-            else:
-                return "Unknown"
+        
+        # Second check: Look for key phrases in full response
+        # Strong ACTIVE indicators (job is NOT expired)
+        active_indicators = [
+            "easy apply", "apply button", "still accepting", 
+            "is active", "is open", "applicants", "early applicant",
+            "apply now", "job is available"
+        ]
+        
+        # Strong EXPIRED indicators
+        expired_indicators = [
+            "no longer accepting", "applications are closed",
+            "posting has closed", "job has closed", "is expired",
+            "is closed", "closed to applications"
+        ]
+        
+        # Check for active indicators first (higher priority to avoid false positives)
+        if any(indicator in response_lower for indicator in active_indicators):
+            return "No"
+        
+        # Then check for expired indicators
+        if any(indicator in response_lower for indicator in expired_indicators):
+            return "Yes"
+        
+        # If unclear, default to "Unknown" rather than guessing
+        print(f"   ⚠️  Unclear response: {response[:100]}")
+        return "Unknown"
                 
     except Exception as e:
         print(f"   ❌ Error checking job: {e}")
