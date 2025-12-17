@@ -7,6 +7,7 @@ import pandas as pd
 from playwright.async_api import async_playwright, TimeoutError as PWTimeoutError
 
 # ---------- CONFIG ----------
+# Part 2: Check LinkedIn Job Expiry Status
 INPUT_CSV = "jobs_dataset4.csv"
 OUTPUT_CSV = "linkedin_job_status_results6.csv"
 

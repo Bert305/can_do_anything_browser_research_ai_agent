@@ -5,6 +5,9 @@ from datetime import datetime
 # =============================================================================
 # 🧹 JOB RESULTS CLEANER
 # =============================================================================
+
+# Part 3: Clean Job Results from LinkedIn Expiry Checker
+
 # This script reads the output from check_linkedin_jobs.py and:
 # 1. Removes rows where expired = False (active jobs - not needed)
 # 2. Keeps rows where expired = True (expired jobs - for tracking)

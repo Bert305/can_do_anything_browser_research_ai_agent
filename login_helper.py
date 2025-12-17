@@ -3,6 +3,9 @@ LinkedIn Login Helper
 Run this script once to log into LinkedIn and save your session.
 Then use STORAGE_STATE = "linkedin_session.json" in check_linkedin_jobs.py
 """
+
+# Part 0 : LinkedIn Login Helper
+
 import asyncio
 from playwright.async_api import async_playwright
 
