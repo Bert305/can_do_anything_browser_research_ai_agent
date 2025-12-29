@@ -33,6 +33,16 @@ cd can_do_anything_browser_research_ai_agent
 pip install -r requirements.txt
 ```
 
+## Activate .venv
+Windows:
+```bash
+.venv\Scripts\activate
+```
+macOS/Linux:
+```bash
+source .venv/bin/activate
+```
+
 ## Usage
 
 After installation, run:
