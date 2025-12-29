@@ -6,3 +6,4 @@ reportlab
 fpdf2
 matplotlib
 Pillow
+playwright

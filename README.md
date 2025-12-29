@@ -31,6 +31,7 @@ Watch a demo of the agent in action on [YouTube](https://www.youtube.com/watch?v
 git clone https://github.com/yourusername/can_do_anything_browser_research_ai_agent.git
 cd can_do_anything_browser_research_ai_agent
 pip install -r requirements.txt
+playwright install
 ```
 
 ## Activate .venv
