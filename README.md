@@ -30,6 +30,7 @@ Watch a demo of the agent in action on [YouTube](https://www.youtube.com/watch?v
 ```bash
 git clone https://github.com/yourusername/can_do_anything_browser_research_ai_agent.git
 cd can_do_anything_browser_research_ai_agent
+python -m venv .venv
 pip install -r requirements.txt
 playwright install
 ```

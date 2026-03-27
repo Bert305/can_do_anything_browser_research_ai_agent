@@ -3,6 +3,7 @@ from browser_use import Agent, BrowserSession, Controller
 from dotenv import load_dotenv
 import os
 import asyncio
+import csv
 from pydantic import BaseModel
 from typing import List
 
@@ -10,16 +11,15 @@ from typing import List
 load_dotenv()
 
 
-class Post(BaseModel):
-	post_title: str
-	post_url: str
-	num_comments: int
-	hours_since_post: int
+class StaffRow(BaseModel):
+    name: str
+    position: str
+    email: str
 
-class Posts(BaseModel):
-	posts: List[Post]
+class StaffRows(BaseModel):
+    rows: List[StaffRow]
 
-controller = Controller(output_model=Posts)
+controller = Controller(output_model=StaffRows)
 
 # Expand user directory for user_data_dir
 user_data_dir = os.path.expanduser('~/.config/browseruse/profiles/default')
@@ -33,17 +33,30 @@ llm = ChatOpenAI(model="gpt-4.1")
 
 async def main():
     agent = Agent(
-        task="Can you webscrape this url and export the staff directory: only the names, positions, and emails. Export in csv and json format.  The url is: https://southwestmiamieagles.net/staff-directory/",
+        task=(
+            "Visit https://southwestmiamieagles.net/staff-directory/ and extract staff records. "
+            "Return JSON only in this exact shape: "
+            "{'rows':[{'name':'...','position':'...','email':'...'}]}. "
+            "Include only rows where all three values are present."
+        ),
         llm=llm,
         browser_session=browser_session,
         controller=controller,
     )
     result = await agent.run()
-    print(result.final_result())
     data = result.final_result()
-    parsed: Posts = Posts.model_validate_json(data)
-    print(parsed)
-    await browser_session.close()
+    parsed: StaffRows = StaffRows.model_validate_json(data)
+
+    output_csv = "staff_directory.csv"
+    with open(output_csv, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["name", "position", "email"])
+        writer.writeheader()
+        for row in parsed.rows:
+            writer.writerow(row.model_dump())
+
+    print(f"Saved CSV: {output_csv}")
+    print(f"Rows exported: {len(parsed.rows)}")
+    await browser_session.stop()
 
 asyncio.run(main())
 
