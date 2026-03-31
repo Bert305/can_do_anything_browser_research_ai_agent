@@ -15,10 +15,10 @@ from datetime import datetime
 # =============================================================================
 
 # INPUT: Output from check_linkedin_jobs.py
-INPUT_CSV = "linkedin_job_status_results6.csv"
+INPUT_CSV = "linkedin_job_status_results_1.csv"
 
 # OUTPUT: Cleaned results (only expired and unknown jobs)
-OUTPUT_CSV = "cleaned_job_results.csv"
+OUTPUT_CSV = "final_cleaned_job_results_1.csv"
 
 # Columns to keep in output
 OUTPUT_COLUMNS = ["company_name", "title", "application_url", "expired"]
