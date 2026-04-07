@@ -1,4 +1,5 @@
 browser-use
+requests
 python-dotenv
 openai
 pandas
