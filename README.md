@@ -31,18 +31,28 @@ Watch a demo of the agent in action on [YouTube](https://www.youtube.com/watch?v
 git clone https://github.com/yourusername/can_do_anything_browser_research_ai_agent.git
 cd can_do_anything_browser_research_ai_agent
 python -m venv .venv
-pip install -r requirements.txt
-playwright install
 ```
 
 ## Activate .venv
-Windows:
+
+Activate the virtual environment:
+
+- **Windows (PowerShell):**
+    ```powershell
+    .\.venv\Scripts\Activate.ps1
+    ```
+- **macOS / Linux (bash/zsh):**
+    ```bash
+    source .venv/bin/activate
+    ```
+
+## Install Dependencies
+
+After activating the virtual environment, install the required packages:
+
 ```bash
-.venv\Scripts\activate
-```
-macOS/Linux:
-```bash
-source .venv/bin/activate
+pip install -r requirements.txt
+playwright install
 ```
 
 ## Usage
