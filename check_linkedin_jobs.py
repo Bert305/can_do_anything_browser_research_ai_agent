@@ -21,8 +21,8 @@ from playwright.async_api import async_playwright, TimeoutError as PWTimeoutErro
 #      looks robotic.
 #   4. Adaptive backoff pauses everything if LinkedIn starts rate-limiting.
 #   5. Checkpointing: already-classified URLs are skipped on re-run.
-INPUT_CSV = "data_ready_for_bot_25_.csv"
-OUTPUT_CSV = "linkedin_job_status_results_25_2.csv"
+INPUT_CSV = "data_ready_for_bot_110_.csv"
+OUTPUT_CSV = "linkedin_job_status_results_110_.csv"
 
 URL_COLUMN = "application_url"
 
@@ -107,6 +107,12 @@ def normalize_text(s: str) -> str:
 def extract_job_id(url: str) -> str | None:
     """Pull the numeric LinkedIn job id out of an application URL."""
     if not url:
+        return None
+    # Only ever mine an id out of an actual LinkedIn URL. Without this guard a
+    # non-URL cell (e.g. a job *description* landing in the URL column) can hit
+    # the digit fallback below, fabricate an id from some stray number, and get
+    # a 404 back — which we'd wrongly record as "expired".
+    if not re.match(r"https?://([a-z0-9-]+\.)*linkedin\.com/", url.strip(), re.I):
         return None
     # .../jobs/view/some-slug-1234567890  or  .../jobs/view/1234567890
     m = re.search(r"/jobs/view/(?:[^/?#]*?-)?(\d{6,})", url)
