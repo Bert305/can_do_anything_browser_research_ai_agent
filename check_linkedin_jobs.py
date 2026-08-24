@@ -21,8 +21,8 @@ from playwright.async_api import async_playwright, TimeoutError as PWTimeoutErro
 #      looks robotic.
 #   4. Adaptive backoff pauses everything if LinkedIn starts rate-limiting.
 #   5. Checkpointing: already-classified URLs are skipped on re-run.
-INPUT_CSV = "data_ready_for_bot_110_.csv"
-OUTPUT_CSV = "linkedin_job_status_results_110_.csv"
+INPUT_CSV = "data_ready_for_bot_128_.csv"
+OUTPUT_CSV = "linkedin_job_status_results_128_.csv"
 
 URL_COLUMN = "application_url"
 
@@ -43,6 +43,12 @@ GUEST_TIMEOUT_MS = 20000
 BROWSER_MIN_DELAY_S = 1.5
 BROWSER_MAX_DELAY_S = 3.5
 NAV_TIMEOUT_MS = 45000
+
+# Close and reopen the tab every N fallback URLs. LinkedIn's logged-in SPA
+# leaks steadily inside a long-lived renderer, so a single tab driven across
+# dozens of navigations grows until Chromium kills it ("Aw, Snap! Out of
+# Memory") — usually partway through a batch, on a memory-tight machine.
+PAGE_RECYCLE_EVERY = 10
 
 # --- Anti-detection ---
 HEADLESS = False               # visible browser is less bot-like for fallback
@@ -418,11 +424,41 @@ async def main():
             )
             page = await context.new_page()
 
+            async def fresh_page(old):
+                if old is not None:
+                    try:
+                        await old.close()
+                    except Exception:
+                        pass
+                return await context.new_page()
+
             for n, (idx, url) in enumerate(fallback, start=1):
+                if n > 1 and (n - 1) % PAGE_RECYCLE_EVERY == 0:
+                    page = await fresh_page(page)
+
                 print(f"  [{n}/{len(fallback)}] browser: {url}")
                 res = await check_browser(page, url)
+
+                # A crashed renderer leaves `page` unusable, and every remaining
+                # URL would silently time out into "unknown". Rebuild once and
+                # retry before accepting a timeout/error verdict.
+                if res["reason"] == "timeout" or res["reason"].startswith("error:"):
+                    print(f"      ↻ {res['reason']} — new tab, retrying once")
+                    page = await fresh_page(page)
+                    res = await check_browser(page, url)
+
                 results[idx] = res
                 await asyncio.sleep(random.uniform(BROWSER_MIN_DELAY_S, BROWSER_MAX_DELAY_S))
+
+            # Persist refreshed cookies. LinkedIn rotates JSESSIONID/lidc on use;
+            # without writing them back, every run replays the same cookie jar
+            # from login_helper.py and the session can only decay until it dies
+            # mid-batch.
+            if STORAGE_STATE:
+                try:
+                    await context.storage_state(path=STORAGE_STATE)
+                except Exception as e:
+                    print(f"⚠️  Could not save session state: {type(e).__name__}")
 
             await context.close()
             await browser.close()
