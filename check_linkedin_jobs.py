@@ -21,8 +21,8 @@ from playwright.async_api import async_playwright, TimeoutError as PWTimeoutErro
 #      looks robotic.
 #   4. Adaptive backoff pauses everything if LinkedIn starts rate-limiting.
 #   5. Checkpointing: already-classified URLs are skipped on re-run.
-INPUT_CSV = "data_ready_for_bot_128_.csv"
-OUTPUT_CSV = "linkedin_job_status_results_128_.csv"
+INPUT_CSV = "data_ready_for_bot_107.csv"
+OUTPUT_CSV = "linkedin_job_status_results_107.csv"
 
 URL_COLUMN = "application_url"
 
@@ -80,6 +80,7 @@ APPLY_CTA_MARKER = "top-card-layout__cta--primary"
 # Common "expired/unavailable" signals on LinkedIn job pages
 EXPIRED_TEXT_HINTS = [
     "no longer accepting applications",
+    "not currently accepting applications",
     "job is no longer available",
     "this job is no longer available",
     "position has been filled",
